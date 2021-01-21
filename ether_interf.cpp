@@ -1,6 +1,7 @@
 #include "ether_interf.h"
 
-ether_interf::ether_interf(): ip(192, 168, 0, 101){
+ether_interf::ether_interf(){
+  //: ip(192, 168, 0, 101)
   
  // Ethernet.begin(mac, ip);
     Ethernet.begin(mac);
@@ -97,16 +98,6 @@ return 1;
 
 int ether_interf::writeSocketData(char *wordd, float numero){
  
-  //Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
- /*  Udp.beginPacket(Udp.remoteIP(), 55180);
-   char buff[16];
-   dtostrf(numero,8, 3, buff);
-   char finalmsg;
-   finalmsg = malloc(strlen(wordd)+1+strlen(buff));
-   strcpy(finalmsg, wordd); 
-   strcat(finalmsg, buff); 
-   Udp.write(finalmsg);
-   Udp.endPacket();*/
 
    Udp.beginPacket(Udp.remoteIP(), 55180);
    char buff[16];
