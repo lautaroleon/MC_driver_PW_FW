@@ -78,6 +78,8 @@ bool my_ADCs_B[8] = {1,1,1,1,1,1,1,1};
 bool ch_on[4] = {0,0,0,0};
 float gate3[4] = {0.9,0.9,0.9,0.9};
 float gate2[4] = {0,0,0,0};
+float last_gate2[4] = {0,0,0,0};
+float last_gate3[4] = {0,0,0,0};
 float I3[4] = {0,0,0,0};
 float I2[4] = {0,0,0,0};
 float Vd3_mon[4] = {0,0,0,0};
@@ -194,269 +196,136 @@ void loop() {
  Vd1_mon[4] = {0,0,0,0};
  Vpeak[4] = {0,0,0,0}*/
  
- Vd3_mon[0] = AD5593R_2.read_ADC(0x6)*3;
- Vd3_mon[1] = AD5593R_2.read_ADC(0x7)*3;
- Vd3_mon[2] = AD5593R_4.read_ADC(0x6)*3;
- Vd3_mon[3] = AD5593R_4.read_ADC(0x7)*3;
+  Vd3_mon[0] = AD5593R_2.read_ADC(0x6)*3;
+  Vd3_mon[1] = AD5593R_2.read_ADC(0x7)*3;
+  Vd3_mon[2] = AD5593R_4.read_ADC(0x6)*3;
+  Vd3_mon[3] = AD5593R_4.read_ADC(0x7)*3;
 
- Vd2_mon[0] = AD5593R_1.read_ADC(0x6)*3;
- Vd2_mon[1] = AD5593R_1.read_ADC(0x1)*3;
- Vd2_mon[2] = AD5593R_3.read_ADC(0x6)*3;
- Vd2_mon[3] = AD5593R_3.read_ADC(0x1)*3;
+  Vd2_mon[0] = AD5593R_1.read_ADC(0x6)*3;
+  Vd2_mon[1] = AD5593R_1.read_ADC(0x1)*3;
+  Vd2_mon[2] = AD5593R_3.read_ADC(0x6)*3;
+  Vd2_mon[3] = AD5593R_3.read_ADC(0x1)*3;
 
- Vd1_mon[0] = AD5593R_1.read_ADC(0x5)*2;
- Vd1_mon[1] = AD5593R_1.read_ADC(0x4)*2;
- Vd1_mon[2] = AD5593R_3.read_ADC(0x5)*2;
- Vd1_mon[3] = AD5593R_3.read_ADC(0x4)*2;
- //Serial.println(Vd1_mon[1]);
- Vpeak[0] = AD5593R_2.read_ADC(0x4);
- Vpeak[1] = AD5593R_2.read_ADC(0x5);
- Vpeak[2] = AD5593R_4.read_ADC(0x4);
- Vpeak[3] = AD5593R_4.read_ADC(0x5);
+  Vd1_mon[0] = AD5593R_1.read_ADC(0x5)*2;
+  Vd1_mon[1] = AD5593R_1.read_ADC(0x4)*2;
+  Vd1_mon[2] = AD5593R_3.read_ADC(0x5)*2;
+  Vd1_mon[3] = AD5593R_3.read_ADC(0x4)*2;
+  //Serial.println(Vd1_mon[1]);
+  Vpeak[0] = AD5593R_2.read_ADC(0x4);
+  Vpeak[1] = AD5593R_2.read_ADC(0x5);
+  Vpeak[2] = AD5593R_4.read_ADC(0x4);
+  Vpeak[3] = AD5593R_4.read_ADC(0x5);
 
- I3[0] = (AD5593R_2.read_ADC(0x2)/I3MON_GAIN)/RMON;
- I2[0] = (AD5593R_2.read_ADC(0x0)/I2MON_GAIN)/RMON;
- I3[1] = (AD5593R_2.read_ADC(0x3)/I3MON_GAIN)/RMON;
- I2[1] = (AD5593R_2.read_ADC(0x1)/I2MON_GAIN)/RMON;
+  I3[0] = (AD5593R_2.read_ADC(0x2)/I3MON_GAIN)/RMON;
+  I2[0] = (AD5593R_2.read_ADC(0x0)/I2MON_GAIN)/RMON;
+  I3[1] = (AD5593R_2.read_ADC(0x3)/I3MON_GAIN)/RMON;
+  I2[1] = (AD5593R_2.read_ADC(0x1)/I2MON_GAIN)/RMON;
 
- I3[2] = (AD5593R_4.read_ADC(0x2)/I3MON_GAIN)/RMON;
- I2[2] = (AD5593R_4.read_ADC(0x0)/I2MON_GAIN)/RMON;
- I3[3] = (AD5593R_4.read_ADC(0x3)/I3MON_GAIN)/RMON;
- I2[3] = (AD5593R_4.read_ADC(0x1)/I2MON_GAIN)/RMON;
- 
- ether->writeSocketData("Vd3_mon[0]: ", Vd3_mon[0]);
- ether->writeSocketData("Vd2_mon[0]: ", Vd2_mon[0]);
- ether->writeSocketData("Vd1_mon[0]: ", Vd1_mon[0]);
- ether->writeSocketData("Vd3_mon[1]: ", Vd3_mon[1]);
- ether->writeSocketData("Vd2_mon[1]: ", Vd2_mon[1]);
- ether->writeSocketData("Vd1_mon[1]: ", Vd1_mon[1]);
+  I3[2] = (AD5593R_4.read_ADC(0x2)/I3MON_GAIN)/RMON;
+  I2[2] = (AD5593R_4.read_ADC(0x0)/I2MON_GAIN)/RMON;
+  I3[3] = (AD5593R_4.read_ADC(0x3)/I3MON_GAIN)/RMON;
+  I2[3] = (AD5593R_4.read_ADC(0x1)/I2MON_GAIN)/RMON;
+  
+  ether->writeSocketData("Vd3_mon[0]: ", Vd3_mon[0]);
+  ether->writeSocketData("Vd2_mon[0]: ", Vd2_mon[0]);
+  ether->writeSocketData("Vd1_mon[0]: ", Vd1_mon[0]);
+  ether->writeSocketData("Vd3_mon[1]: ", Vd3_mon[1]);
+  ether->writeSocketData("Vd2_mon[1]: ", Vd2_mon[1]);
+  ether->writeSocketData("Vd1_mon[1]: ", Vd1_mon[1]);
 
   ether->writeSocketData("Vd3_mon[2]: ", Vd3_mon[2]);
- ether->writeSocketData("Vd2_mon[2]: ", Vd2_mon[2]);
- ether->writeSocketData("Vd1_mon[2]: ", Vd1_mon[2]);
- ether->writeSocketData("Vd3_mon[3]: ", Vd3_mon[3]);
- ether->writeSocketData("Vd2_mon[3]: ", Vd2_mon[3]);
- ether->writeSocketData("Vd1_mon[3]: ", Vd1_mon[3]);
- 
- ether->writeSocketData("I3[0]: ", I3[0]);
- ether->writeSocketData("I2[0]: ", I2[0]);
- ether->writeSocketData("I3[1]: ", I3[1]);
- ether->writeSocketData("I2[1]: ", I2[1]);
-
- ether->writeSocketData("I3[2]: ", I3[2]);
- ether->writeSocketData("I2[2]: ", I2[2]);
- ether->writeSocketData("I3[3]: ", I3[3]);
- ether->writeSocketData("I2[3]: ", I2[3]);
- 
- ether->writeSocketData("G3[0]: ", gate3[0]);
- ether->writeSocketData("G2[0]: ", gate2[0]);
- ether->writeSocketData("G3[1]: ", gate3[1]);
- ether->writeSocketData("G2[1]: ", gate2[1]);
-
- ether->writeSocketData("G3[2]: ", gate3[2]);
- ether->writeSocketData("G2[2]: ", gate2[2]);
- ether->writeSocketData("G3[3]: ", gate3[3]);
- ether->writeSocketData("G2[3]: ", gate2[3]);
- 
- ether->writeSocketData("Vpeak[0]: ", Vpeak[0]);
- ether->writeSocketData("Vpeak[1]: ", Vpeak[1]);
- ether->writeSocketData("Vpeak[2]: ", Vpeak[2]);
- ether->writeSocketData("Vpeak[3]: ", Vpeak[3]);
- 
-
-///////////////ch 1 feedback///////////////
-  if(ch_on[0]){
-    
-    DEBUG_PRINT("ch1:");
-    DEBUG_PRINT("\t I3 = ");
-    DEBUG_PRINT(I3[0],3);
-    DEBUG_PRINT("\t I2 = ");
-    DEBUG_PRINT(I2[0],3);
-
-    if(I2[0]<I2SET-I2HIST && gate2[0]<2.55){
-       if(I2[0]<I2UPFAST){
-          gate2[0] += 0.05 ;  
-       }
-       else{
-          gate2[0] += 0.001;      
-       }
-       AD5593R_1.write_DAC(0x0, gate2[0]);
-    }
-    
-    if(I2[0]>I2SET+I2HIST && gate2[0] >0){
-       gate2[0] -= 0.001;
-       AD5593R_1.write_DAC(0x0, gate2[0]);
-      
-    }
-    DEBUG_PRINT("\t G2 = ");
-    DEBUG_PRINT(gate2[0]);
-    
-    if(I3[0]<I3SET-I3HIST && gate3[0]>0.1){
-       if(I3[0]<I3UPFAST){
-          gate3[0] -= 0.03;   
-       }
-       else{
-          gate3[0] -= 0.001;      
-       }
-       AD5593R_1.write_DAC(0x2, G3_GAIN*gate3[0]);
-      
-    }
-    if(I3[0]>I3SET+I3HIST && gate3[0]<1){
-       gate3[0] += 0.003;
-       AD5593R_1.write_DAC(0x2, 2*gate3[0]);
-    }
-    DEBUG_PRINT("\t G3 = ");
-    DEBUG_PRINT(gate3[0]);
-    DEBUG_PRINT("\n");
-  }
-
-  /////////////////////////ch 2 feedback///////////////
-
-  if(ch_on[1]){
+  ether->writeSocketData("Vd2_mon[2]: ", Vd2_mon[2]);
+  ether->writeSocketData("Vd1_mon[2]: ", Vd1_mon[2]);
+  ether->writeSocketData("Vd3_mon[3]: ", Vd3_mon[3]);
+  ether->writeSocketData("Vd2_mon[3]: ", Vd2_mon[3]);
+  ether->writeSocketData("Vd1_mon[3]: ", Vd1_mon[3]);
   
-    DEBUG_PRINT("ch2:");
-    DEBUG_PRINT("\t I3 = ");
-    DEBUG_PRINT(I3[1],3);
-    DEBUG_PRINT("\t I2 = ");
-    DEBUG_PRINT(I2[1],3);
+  ether->writeSocketData("I3[0]: ", I3[0]);
+  ether->writeSocketData("I2[0]: ", I2[0]);
+  ether->writeSocketData("I3[1]: ", I3[1]);
+  ether->writeSocketData("I2[1]: ", I2[1]);
 
-    if(I2[1]<I2SET-I2HIST && gate2[1]<2.55){
-       if(I2[1]<I2UPFAST){
-          gate2[1] += 0.05 ;  
-       }
-       else{
-          gate2[1] += 0.001;      
-       }
-       AD5593R_1.write_DAC(0x7, gate2[1]);
-       DEBUG_PRINT("\t G2 =");
-       DEBUG_PRINT(gate2[1]);
-    }
-    if(I2[1]>I2SET+I2HIST && gate2[1] >0){
-       gate2[1] -= 0.001;
-       DEBUG_PRINT("\t G2 = ");
-       DEBUG_PRINT(gate2[1]);
-       AD5593R_1.write_DAC(0x7, gate2[1]);
-    }
-    if(I3[1]<I3SET-I3HIST && gate3[1]>0.1){
-       if(I3[1]<I3UPFAST){
-          gate3[1] -= 0.03;   
-       }
-       else{
-          gate3[1] -= 0.001;      
-       }
-       AD5593R_1.write_DAC(0x3, 2*gate3[1]);
-       DEBUG_PRINT("\t G3 = ");
-       DEBUG_PRINT(gate3[1]);
-
-
-    }
-    if(I3[0]>I3SET+I3HIST && gate3[1]<1){
-       gate3[1] += 0.003;
-       AD5593R_1.write_DAC(0x3, 2*gate3[1]);
-       DEBUG_PRINT("\t G3 = ");
-       DEBUG_PRINT(gate3[1]);
-    }
-    DEBUG_PRINT("\n");
-  }
-
-
-///////////////ch 3 feedback///////////////
-  if(ch_on[3]){
-    
-    DEBUG_PRINT("ch3:");
-    DEBUG_PRINT("\t I3 = ");
-    DEBUG_PRINT(I3[2],3);
-    DEBUG_PRINT("\t I2 = ");
-    DEBUG_PRINT(I2[2],3);
-
-    if(I2[2]<I2SET-I2HIST && gate2[2]<2.55){
-       if(I2[2]<I2UPFAST){
-          gate2[2] += 0.05 ;  
-       }
-       else{
-          gate2[2] += 0.001;      
-       }
-       AD5593R_3.write_DAC(0x0, gate2[2]);
-    }
-    
-    if(I2[2]>I2SET+I2HIST && gate2[2] >0){
-       gate2[2] -= 0.001;
-       AD5593R_3.write_DAC(0x0, gate2[2]);
-      
-    }
-    DEBUG_PRINT("\t G2 = ");
-    DEBUG_PRINT(gate2[2]);
-    
-    if(I3[2]<I3SET-I3HIST && gate3[2]>0.1){
-       if(I3[2]<I3UPFAST){
-          gate3[2] -= 0.03;   
-       }
-       else{
-          gate3[2] -= 0.001;      
-       }
-       AD5593R_3.write_DAC(0x2, G3_GAIN*gate3[2]);
-      
-    }
-    if(I3[2]>I3SET+I3HIST && gate3[2]<1){
-       gate3[2] += 0.003;
-       AD5593R_3.write_DAC(0x2, 2*gate3[2]);
-    }
-    DEBUG_PRINT("\t G3 = ");
-    DEBUG_PRINT(gate3[2]);
-    DEBUG_PRINT("\n");
-  }
-
-  /////////////////////////ch 4 feedback///////////////
-
-  if(ch_on[3]){
+  ether->writeSocketData("I3[2]: ", I3[2]);
+  ether->writeSocketData("I2[2]: ", I2[2]);
+  ether->writeSocketData("I3[3]: ", I3[3]);
+  ether->writeSocketData("I2[3]: ", I2[3]);
   
-    DEBUG_PRINT("ch4:");
-    DEBUG_PRINT("\t I3 = ");
-    DEBUG_PRINT(I3[3],3);
-    DEBUG_PRINT("\t I2 = ");
-    DEBUG_PRINT(I2[3],3);
+  ether->writeSocketData("G3[0]: ", gate3[0]);
+  ether->writeSocketData("G2[0]: ", gate2[0]);
+  ether->writeSocketData("G3[1]: ", gate3[1]);
+  ether->writeSocketData("G2[1]: ", gate2[1]);
 
-    if(I2[3]<I2SET-I2HIST && gate2[3]<2.55){
-       if(I2[3]<I2UPFAST){
-          gate2[3] += 0.05 ;  
-       }
-       else{
-          gate2[3] += 0.001;      
-       }
-       AD5593R_3.write_DAC(0x7, gate2[3]);
-       DEBUG_PRINT("\t G2 =");
-       DEBUG_PRINT(gate2[3]);
-    }
-    if(I2[3]>I2SET+I2HIST && gate2[3] >0){
-       gate2[3] -= 0.001;
-       DEBUG_PRINT("\t G2 = ");
-       DEBUG_PRINT(gate2[3]);
-       AD5593R_3.write_DAC(0x7, gate2[3]);
-    }
-    if(I3[3]<I3SET-I3HIST && gate3[3]>0.1){
-       if(I3[3]<I3UPFAST){
-          gate3[3] -= 0.03;   
-       }
-       else{
-          gate3[3] -= 0.001;      
-       }
-       AD5593R_3.write_DAC(0x3, 2*gate3[3]);
-       DEBUG_PRINT("\t G3 = ");
-       DEBUG_PRINT(gate3[3]);
+  ether->writeSocketData("G3[2]: ", gate3[2]);
+  ether->writeSocketData("G2[2]: ", gate2[2]);
+  ether->writeSocketData("G3[3]: ", gate3[3]);
+  ether->writeSocketData("G2[3]: ", gate2[3]);
+  
+  ether->writeSocketData("Vpeak[0]: ", Vpeak[0]);
+  ether->writeSocketData("Vpeak[1]: ", Vpeak[1]);
+  ether->writeSocketData("Vpeak[2]: ", Vpeak[2]);
+  ether->writeSocketData("Vpeak[3]: ", Vpeak[3]);
 
+  int v2_gates[2] = {0x0,0x7};
+  int v3_gates[2] = {0x2,0x3};
 
-    }
-    if(I3[3]>I3SET+I3HIST && gate3[3]<1){
-       gate3[3] += 0.003;
-       AD5593R_3.write_DAC(0x3, 2*gate3[3]);
-       DEBUG_PRINT("\t G3 = ");
-       DEBUG_PRINT(gate3[3]);
-    }
-    DEBUG_PRINT("\n");
-  }
+  ///////////////ch feedback///////////////
+  int k;
+  for (k = 0; k < 4; k++) {
+    if (ch_on[k]) {
+      DEBUG_PRINT("ch%i:",k);
+      DEBUG_PRINT("\t I3 = ");
+      DEBUG_PRINT(I3[0],3);
+      DEBUG_PRINT("\t I2 = ");
+      DEBUG_PRINT(I2[0],3);
 
+      if (I2[k] < I2SET-I2HIST && gate2[k] < 2.55) {
+        if (I2[k] < I2UPFAST) {
+	  gate2[k] += 0.05 ;  
+	} else {
+          gate2[k] += 0.001;      
+	}
+      }
+    
+      if (I2[k] > I2SET+I2HIST && gate2[k] > 0)
+	gate2[k] -= 0.001;
 
+      if (gate2[k] != last_gate2[k]) {
+	if (k < 2) {
+	  AD5593R_1.write_DAC(v2_gates[k%2], gate2[k]);
+	} else {
+	  AD5593R_3.write_DAC(v2_gates[k%2], gate2[k]);
+	}
+	last_gate2[k] = gate2[k];
+      }
 
+      DEBUG_PRINT("\t G2 = ");
+      DEBUG_PRINT(gate2[k]);
+    
+      if (I3[k] < I3SET-I3HIST && gate3[k] > 0.1) {
+	 if (I3[k] < I3UPFAST) {
+	    gate3[k] -= 0.03;   
+	 } else {
+	    gate3[k] -= 0.001;      
+	 }
+      }
+
+      if (I3[k] > I3SET+I3HIST && gate3[k] < 1)
+	 gate3[k] += 0.003;
+
+      if (gate3[k] != last_gate3[k]) {
+	if (k < 2) {
+	  AD5593R_1.write_DAC(v3_gates[k%2], G3_GAIN*gate3[k]);
+	} else {
+	  AD5593R_3.write_DAC(v3_gates[k%2], G3_GAIN*gate3[k]);
+	}
+	last_gate3[k] = gate3[k];
+      }
+
+      DEBUG_PRINT("\t G3 = ");
+      DEBUG_PRINT(gate3[k]);
+      DEBUG_PRINT("\n");
+    } /* Ch on */
+  } /* for loop over channels. */
 
   //////////////////socket read////////
   if(ether->readSocketData(w)){
