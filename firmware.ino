@@ -328,8 +328,13 @@ void loop() {
   } /* for loop over channels. */
 
   //////////////////socket read////////
-  if(ether->readSocketData(w)){
-    
+
+  int packet_size = ether->readSocketData(w);
+  if(packet_size){
+    /* Write a null byte at the end of the packet to make sure we don't read
+     * anything from the last command. */
+    w[packet_size] = '\0';
+
      Serial.print("Contents:");
      Serial.println(w);   
       if(!strncmp(w, "Vc_set=", 7) ){
